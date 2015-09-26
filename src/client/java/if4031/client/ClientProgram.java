@@ -2,7 +2,6 @@ package if4031.client;
 
 import if4031.client.config.ClientConfiguration;
 import if4031.client.config.PropertyConfiguration;
-import org.apache.thrift.transport.TTransportException;
 
 import java.io.IOException;
 import java.util.Scanner;
@@ -10,7 +9,7 @@ import java.util.Scanner;
 class ClientProgram {
     private static final String PROPERTY_FILE = "/client.properties";
 
-    public static void main(String[] args) throws TTransportException, IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         ClientConfiguration configuration = new PropertyConfiguration(PROPERTY_FILE);
 
         String serverAddress = configuration.getString("serverAddress");

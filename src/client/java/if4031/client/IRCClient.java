@@ -4,25 +4,24 @@ import if4031.client.command.Command;
 import if4031.client.command.IRCCommandFactory;
 import if4031.client.executor.DelayableRepeatingExecutor;
 import if4031.client.executor.ToleratingTimedExecutor;
+import if4031.client.rpc.GRPCClient;
 import if4031.client.rpc.Message;
 import if4031.client.rpc.RPCClient;
 import if4031.client.rpc.RPCException;
-import if4031.client.rpc.ThriftRPCClient;
-import if4031.common.IRCService;
-import org.apache.thrift.protocol.TBinaryProtocol;
-import org.apache.thrift.protocol.TProtocol;
-import org.apache.thrift.transport.TSocket;
-import org.apache.thrift.transport.TTransport;
-import org.apache.thrift.transport.TTransportException;
+import if4031.common.IRCServiceGrpc;
+import io.grpc.ChannelImpl;
+import io.grpc.netty.NegotiationType;
+import io.grpc.netty.NettyChannelBuilder;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 // TODO this is the main program
 public class IRCClient {
 
     private final IRCCommandFactory ircCommandFactory = new IRCCommandFactory();
     private final RPCClient rpcClient;
-    private final TTransport transport;
+    private final ChannelImpl channel;
     private final ToleratingTimedExecutor toleratingExecutor;
     private final DelayableRepeatingExecutor executorService;
 
@@ -34,11 +33,9 @@ public class IRCClient {
     private ClientState clientState = ClientState.LOGGED_OUT;
 
     IRCClient(String server, int port, int refreshMillis, int toleranceMillis) {
-        transport = new TSocket(server, port);
-
-        TProtocol protocol = new TBinaryProtocol(transport);
-        IRCService.Client client = new IRCService.Client(protocol);
-        rpcClient = new ThriftRPCClient(client);
+        channel = NettyChannelBuilder.forAddress(server, port).negotiationType(NegotiationType.PLAINTEXT).build();
+        IRCServiceGrpc.IRCServiceBlockingStub client = IRCServiceGrpc.newBlockingStub(channel);
+        rpcClient = new GRPCClient(client);
 
         toleratingExecutor = new ToleratingTimedExecutor(new Runnable() {
             @Override
@@ -49,13 +46,12 @@ public class IRCClient {
         executorService = toleratingExecutor;
     }
 
-    void start() throws TTransportException {
-        transport.open();
+    void start() {
         toleratingExecutor.initialize();
     }
 
-    void stop() {
-        transport.close();
+    void stop() throws InterruptedException {
+        channel.awaitTermination(5, TimeUnit.SECONDS);
         toleratingExecutor.shutdown();
     }
 
