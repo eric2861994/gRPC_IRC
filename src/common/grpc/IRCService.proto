@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package if4031;
+
+option java_multiple_files = true;
+option java_package = "if4031.common";
+
+service IRCService {
+	/** Login, get a userID in the process. Future requests from client will use userID as identifier. */
+    rpc login (LoginRequest) returns (LoginResponse) {}
+
+    rpc changeNickname (ChangeNickRequest) returns (StatusResponse) {}
+
+    rpc logout (ActionRequest) returns (StatusResponse) {}
+
+    rpc joinChannel (ChannelRequest) returns (StatusResponse) {}
+
+    /** Get new messages for user. */
+    rpc getMessage (ActionRequest) returns (MessagesResponse) {}
+
+    /** Send a message to a specific channel. Retrieving new messages in the process. */
+    rpc sendMessageToChannel (ChannelMessageRequest) returns (MessagesResponse) {}
+
+    /** Send a message to all subscribed channel. Retrieving new messages in the process. */
+    rpc sendMessage (MessageRequest) returns (MessagesResponse) {}
+
+    rpc leaveChannel (ChannelRequest) returns (StatusResponse) {}
+}
+
+
+message ChannelMessageRequest {
+    int32 user = 1;
+    string channel = 2;
+    string message = 3;
+}
+message MessageRequest {
+    int32 user = 1;
+    string message = 2;
+}
+message ChangeNickRequest {
+    int32 user = 1;
+    string newNickname = 2;
+}
+message ChannelRequest {
+    int32 user = 1;
+    string channel = 2;
+}
+message LoginRequest {
+  string nickname = 1;
+}
+message ActionRequest {
+    int32 user = 1;
+}
+
+message LoginResponse {
+  int32 userID = 1;
+  ResponseStatus status = 2;
+  string reason = 3;
+}
+enum ResponseStatus {
+    OK = 0;
+    NOT_OK = 1;
+}
+message StatusResponse {
+    ResponseStatus status = 1;
+    string reason = 2;
+}
+message Message {
+    string sender = 1;
+    string channel = 2;
+    string body = 3;
+    int64 sendTime = 4;
+}
+message MessagesResponse {
+    repeated Message messages = 1;
+}
