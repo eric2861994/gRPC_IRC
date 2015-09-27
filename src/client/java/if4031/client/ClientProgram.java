@@ -10,14 +10,16 @@ class ClientProgram {
     private static final String PROPERTY_FILE = "/client.properties";
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        ClientConfiguration configuration = new PropertyConfiguration(PROPERTY_FILE);
+//        ClientConfiguration configuration = new PropertyConfiguration(PROPERTY_FILE);
 
-        String serverAddress = configuration.getString("serverAddress");
-        int serverPort = configuration.getInt("serverPort");
-
-        int refreshMillis = configuration.getInt("refreshTimeMillis");
-        int toleranceMillis = configuration.getInt("toleranceTimeMillis");
-
+//        String serverAddress = configuration.getString("serverAddress");
+//        int serverPort = configuration.getInt("serverPort");
+//        int refreshMillis = configuration.getInt("refreshTimeMillis");
+//        int toleranceMillis = configuration.getInt("toleranceTimeMillis");
+        String serverAddress = "localhost";
+        int serverPort = 9090;
+        int refreshMillis = 5000;
+        int toleranceMillis = 500;
 
         IRCClient ircClient = new IRCClient(serverAddress, serverPort, refreshMillis, toleranceMillis);
 

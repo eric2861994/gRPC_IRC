@@ -60,3 +60,10 @@ crashlytics-build.properties
 
 #custom lib
 lib/
+.gradle/
+build.gradle
+gradle/
+gradlew
+gradlew.bat
+settings.gradle
+
