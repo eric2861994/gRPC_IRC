@@ -17,10 +17,10 @@ public class ServerProgram {
     public static void main(String[] args) throws IOException, InterruptedException {
         ServerImpl server;
         ServerConfiguration configuration = new ServerConfiguration(PROPERTY_FILE);
-//        String serverAddress = configuration.getString("serverAddress");
-//        int port = configuration.getInt("serverPort");
-        String serverAddress = "localhost";
-        int port = 9090;
+        String serverAddress = configuration.getString("serverAddress");
+        int port = configuration.getInt("serverPort");
+//        String serverAddress = "localhost";
+//        int port = 9090;
         server = NettyServerBuilder.forPort(port)
                 .addService(IRCServiceGrpc.bindService(new IRCServiceGrpcImpl()))
                         .build().start();

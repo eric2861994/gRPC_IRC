@@ -38,10 +38,8 @@ class CLInterface implements IRCClientListener {
             out.print(NICKNAME_PROMPT);
             nickname = scanner.nextLine();
         } while (nickname.contains(" "));
-        // TODO implement the case where user don't give a nickname
 
         ircClient.login(nickname);
-        // TODO handle login failure
 
         // main loop
         String commandString;
@@ -56,7 +54,6 @@ class CLInterface implements IRCClientListener {
             }
 
             if (commandString.equals("")) {
-                // TODO impl
 
             } else {
                 ircClient.parseExecute(commandString);
@@ -65,7 +62,6 @@ class CLInterface implements IRCClientListener {
 
         ircClient.logout();
         printMessages();
-        // TODO handle logout failure
     }
 
     @Override
@@ -107,7 +103,7 @@ class CLInterface implements IRCClientListener {
 
 
 
-    private static String PROGRAM_NAME = "Apache Thrift IRC";
+    private static String PROGRAM_NAME = "gRPC IRC";
     private static String WELCOME_MESSAGE = "Welcome to " + PROGRAM_NAME + "!\nEnter your nickname to login..\n";
     private static String ERROR_MESSAGE = "Error!";
     private static String NICKNAME_PROMPT = "nickname: ";

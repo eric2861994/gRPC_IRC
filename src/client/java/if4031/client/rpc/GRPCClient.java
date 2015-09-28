@@ -18,7 +18,6 @@ public class GRPCClient implements RPCClient {
         LoginRequest loginRequest = LoginRequest.newBuilder().setNickname(nickname).build();
         LoginResponse loginResponse = gRPCClient.login(loginRequest);
         return loginResponse.getUserID();
-        // TODO handle error
     }
 
     @Override
@@ -26,21 +25,18 @@ public class GRPCClient implements RPCClient {
         ChangeNickRequest changeNicknameRequest = ChangeNickRequest.newBuilder().setUser(user).setNewNickname(newNick).build();
         StatusResponse statusResponse = gRPCClient.changeNickname(changeNicknameRequest);
         return statusResponse.getStatus() == ResponseStatus.OK;
-        // TODO handle error
     }
 
     @Override
     public void logout(int user) throws RPCException {
         ActionRequest actionRequest = ActionRequest.newBuilder().setUser(user).build();
         StatusResponse statusResponse = gRPCClient.logout(actionRequest);
-        // TODO handle error
     }
 
     @Override
     public void joinChannel(int user, String channel) throws RPCException {
         ChannelRequest channelRequest = ChannelRequest.newBuilder().setUser(user).setChannel(channel).build();
         StatusResponse statusResponse = gRPCClient.joinChannel(channelRequest);
-        // TODO handle error
     }
 
     /**
@@ -70,7 +66,6 @@ public class GRPCClient implements RPCClient {
         MessagesResponse messagesResponse = gRPCClient.getMessage(actionRequest);
         List<if4031.common.Message> remoteMessages = messagesResponse.getMessagesList();
         return remoteToLocalMessages(remoteMessages);
-        // TODO handle error
     }
 
     @Override
@@ -79,7 +74,6 @@ public class GRPCClient implements RPCClient {
         MessagesResponse messagesResponse = gRPCClient.sendMessageToChannel(channelMessageRequest);
         List<if4031.common.Message> remoteMessages = messagesResponse.getMessagesList();
         return remoteToLocalMessages(remoteMessages);
-        // TODO handle error
     }
 
     @Override
@@ -88,13 +82,11 @@ public class GRPCClient implements RPCClient {
         MessagesResponse messagesResponse = gRPCClient.sendMessage(messageRequest);
         List<if4031.common.Message> remoteMessages = messagesResponse.getMessagesList();
         return remoteToLocalMessages(remoteMessages);
-        // TODO handle error
     }
 
     @Override
     public void leaveChannel(int user, String channel) throws RPCException {
         ChannelRequest channelRequest = ChannelRequest.newBuilder().setUser(user).setChannel(channel).build();
         StatusResponse statusResponse = gRPCClient.leaveChannel(channelRequest);
-        // TODO handle error
     }
 }
