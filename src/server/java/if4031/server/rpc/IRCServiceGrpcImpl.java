@@ -103,7 +103,13 @@ public class IRCServiceGrpcImpl implements IRCServiceGrpc.IRCService {
 
     @Override
     public void leaveChannel(ChannelRequest request, StreamObserver<StatusResponse> responseObserver) {
-        boolean status = ircData.leaveChannel(request.getUser(), request.getChannel());
+        boolean status = false;
+        try {
+            status = ircData.leaveChannel(request.getUser(), request.getChannel());
+        } catch (ChannelException e) {
+            status = false;
+            e.printStackTrace();
+        }
         StatusResponse.Builder builder = StatusResponse.newBuilder();
         if (status) {
             builder.setStatus(ResponseStatus.OK);
@@ -118,7 +124,7 @@ public class IRCServiceGrpcImpl implements IRCServiceGrpc.IRCService {
     public static MessagesResponse messagesListConverter(List<Message> messages) {
         MessagesResponse.Builder builder = MessagesResponse.newBuilder();
         for (int i = 0; i < messages.size(); ++i) {
-            builder = builder.setMessages(i, messages.get(i));
+            builder = builder.addMessages(messages.get(i));
         }
         MessagesResponse messagesResponse = builder.build();
         return messagesResponse;

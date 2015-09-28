@@ -1,6 +1,6 @@
 package if4031.server;
 
-import exception.ChannelException;
+import if4031.server.exception.ChannelException;
 import if4031.common.Message;
 
 import java.util.ArrayList;
@@ -58,7 +58,8 @@ public class IRCUser {
         List<Message> newMessage = new ArrayList<Message>();
         for (Message m : this.getMessages()) {
             if (!m.getChannel().equals(channel)) {
-                newMessage.add(new Message(m));
+                Message message = Message.newBuilder(m).build();
+                newMessage.add(message);
             }
         }
         this.setMessages(newMessage);

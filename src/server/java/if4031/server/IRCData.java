@@ -152,10 +152,11 @@ public class IRCData {
     public List<Message> getMessage(int user) {
         IRCUser ircUser = this.findIRCUserByUserId(user);
         List<Message> messages = new ArrayList<Message> (ircUser.getMessages());
+        ircUser.deleteMessageAtAllChannel();
         return messages;
     }
 
-    public boolean leaveChannel(int user, String channel) {
+    public boolean leaveChannel(int user, String channel) throws ChannelException {
         IRCUser ircUser = this.findIRCUserByUserId(user);
         IRCChannel removed = ircUser.removeIRCChannel(channel);
         IRCChannel ircChannel = this.findIRCChannel(removed.getChannelName());
@@ -164,12 +165,11 @@ public class IRCData {
     }
 
     public List<Message> sendMessageToChannel(int user, String channel, String messageBody) {
-        Message message = Message.newBuilder().setBody(messageBody).build();
+        Message.Builder messageBuilder = Message.newBuilder().setBody(messageBody);
         IRCUser myIRCUser = this.findIRCUserByUserId(user);
 
-        message.toBuilder().setSender(myIRCUser.getNickname());
-        message.toBuilder().setChannel(channel);
-        message.toBuilder().setSendTime(System.currentTimeMillis());
+        Message message = messageBuilder.setSender(myIRCUser.getNickname()).setChannel(channel).setSendTime(System.currentTimeMillis()).build();
+
 
         IRCChannel ircChannel = this.findIRCChannel(channel);
         if (ircChannel != null) {
@@ -177,7 +177,7 @@ public class IRCData {
             for (Integer recipient : recipients) {
                 if (recipient != null) {
                     IRCUser ircUser = this.findIRCUserByUserId(recipient);
-                    ircUser.addMessage(message);
+                    ircUser.addMessage(Message.newBuilder(message).build());
                 }
             }
         }
@@ -198,14 +198,14 @@ public class IRCData {
     }
 
     public List<Message> sendMessage(int user, String messageBody) {
-        Message message = Message.newBuilder().setBody(messageBody).build();
+        Message.Builder messageBuilder = Message.newBuilder().setBody(messageBody);
         IRCUser myIRCUser = this.findIRCUserByUserId(user);
-        message.toBuilder().setSender(myIRCUser.getNickname());
-        message.toBuilder().setSendTime(System.currentTimeMillis());
+        messageBuilder = messageBuilder.setSender(myIRCUser.getNickname()).setSendTime(System.currentTimeMillis());
 
         List<String> ircChannelNames = myIRCUser.getIrcChannelNames();
         for (String ircChannelName : ircChannelNames) {
-            message.toBuilder().setChannel(ircChannelName);
+            messageBuilder = messageBuilder.setChannel(ircChannelName);
+            Message message = messageBuilder.build();
             IRCChannel ircChannel = this.findIRCChannel(ircChannelName);
             List<Integer> recipients = ircChannel.getIntegers();
             for (Integer recipient : recipients) {

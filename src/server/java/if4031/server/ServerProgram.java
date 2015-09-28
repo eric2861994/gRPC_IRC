@@ -16,7 +16,7 @@ public class ServerProgram {
 
     public static void main(String[] args) throws IOException, InterruptedException {
         ServerImpl server;
-//        ServerConfiguration configuration = new ServerConfiguration(PROPERTY_FILE);
+        ServerConfiguration configuration = new ServerConfiguration(PROPERTY_FILE);
 //        String serverAddress = configuration.getString("serverAddress");
 //        int port = configuration.getInt("serverPort");
         String serverAddress = "localhost";
